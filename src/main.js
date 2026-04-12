@@ -5,6 +5,15 @@ import { setupInput } from "./input.js";
 const GRID_SIZE = 20;
 const CELL_SIZE = 32; // canvas pixels per grid cell
 const TICK_INTERVAL_MS = 120;
+const HIGH_SCORE_KEY = "snakeHighScore";
+
+function loadHighScore() {
+  return parseInt(localStorage.getItem(HIGH_SCORE_KEY) || "0", 10);
+}
+
+function saveHighScore(score) {
+  localStorage.setItem(HIGH_SCORE_KEY, String(score));
+}
 
 function drawOverlayText(ctx, text, canvas) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -13,6 +22,17 @@ function drawOverlayText(ctx, text, canvas) {
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+}
+
+// Draws score and high score in the top-left corner during gameplay.
+function drawHUD(ctx, canvas, score, highScore) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "rgba(255, 255, 255, 0.65)";
+  ctx.font = "16px monospace";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText(`Score: ${score}`, 10, 10);
+  ctx.fillText(`Best: ${highScore}`, 10, 30);
 }
 
 function main() {
@@ -34,12 +54,19 @@ function main() {
   console.log("WebGL Snake initialized");
 
   let lastTick = 0;
+  let highScore = loadHighScore();
 
   function loop(timestamp) {
     // --- Tick at fixed interval ---
     if (game.state.running && timestamp - lastTick >= TICK_INTERVAL_MS) {
       game.tick();
       lastTick = timestamp;
+
+      // Persist new high score whenever current score exceeds it.
+      if (game.state.score > highScore) {
+        highScore = game.state.score;
+        saveHighScore(highScore);
+      }
     }
 
     // --- Render ---
@@ -49,7 +76,7 @@ function main() {
       renderer.drawGrid(GRID_SIZE, GRID_SIZE, CELL_SIZE);
       renderer.drawSnake(game.state.snake);
       renderer.drawFood(game.state.food);
-      overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+      drawHUD(overlayCtx, overlayCanvas, game.state.score, highScore);
     } else if (game.state.gameOver) {
       drawOverlayText(overlayCtx, `Game Over  -  Score: ${game.state.score}  -  Press SPACE to restart`, overlayCanvas);
     } else {
