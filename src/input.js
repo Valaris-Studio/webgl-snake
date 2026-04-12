@@ -20,7 +20,7 @@ export function setupInput(game) {
       if (game.state.gameOver) {
         game.reset();
       }
-      game.state.running = !game.state.running;
+      game.state.running = true;
       return;
     }
 

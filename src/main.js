@@ -1,10 +1,9 @@
 import { createRenderer } from "./renderer.js";
-import { createGame } from "./game.js";
+import { createGame, MOVE_INTERVAL_MS } from "./game.js";
 import { setupInput } from "./input.js";
 
 const GRID_SIZE = 20;
 const CELL_SIZE = 32; // canvas pixels per grid cell
-const TICK_INTERVAL_MS = 120;
 
 function drawOverlayText(ctx, text, canvas) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -37,7 +36,7 @@ function main() {
 
   function loop(timestamp) {
     // --- Tick at fixed interval ---
-    if (game.state.running && timestamp - lastTick >= TICK_INTERVAL_MS) {
+    if (game.state.running && timestamp - lastTick >= MOVE_INTERVAL_MS) {
       game.tick();
       lastTick = timestamp;
     }
@@ -47,8 +46,8 @@ function main() {
 
     if (game.state.running) {
       renderer.drawGrid(GRID_SIZE, GRID_SIZE, CELL_SIZE);
-      renderer.drawSnake(game.state.snake);
-      renderer.drawFood(game.state.food);
+      renderer.drawSnake(game.state.snake, CELL_SIZE);
+      renderer.drawFood(game.state.food, CELL_SIZE);
       overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
     } else if (game.state.gameOver) {
       drawOverlayText(overlayCtx, `Game Over  -  Score: ${game.state.score}  -  Press SPACE to restart`, overlayCanvas);
