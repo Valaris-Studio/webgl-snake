@@ -14,6 +14,7 @@ function initialState(gridWidth, gridHeight) {
     gameOver: false,
     gridWidth,
     gridHeight,
+    trail: [], // [{x, y, age}] — ghost segments fading over 5 ticks
   };
 }
 
@@ -21,6 +22,16 @@ export function createGame(gridWidth, gridHeight) {
   let state = initialState(gridWidth, gridHeight);
 
   function tick() {
+    // Age existing trail ghosts and drop expired ones (lifetime = 5 ticks)
+    state.trail = state.trail
+      .map(g => ({ ...g, age: g.age + 1 }))
+      .filter(g => g.age < 5);
+
+    // Snapshot current snake positions before movement as new ghosts
+    for (const seg of state.snake) {
+      state.trail.push({ x: seg.x, y: seg.y, age: 0 });
+    }
+
     // TODO: move snake head, check collisions, grow on food, spawn new food
     console.log("TODO: tick");
   }

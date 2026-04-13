@@ -26,7 +26,7 @@ function main() {
   }
 
   const overlayCtx = overlayCanvas.getContext("2d");
-  const renderer = createRenderer(gl);
+  const renderer = createRenderer(gl, GRID_SIZE, GRID_SIZE);
   const game = createGame(GRID_SIZE, GRID_SIZE);
 
   setupInput(game);
@@ -47,6 +47,7 @@ function main() {
 
     if (game.state.running) {
       renderer.drawGrid(GRID_SIZE, GRID_SIZE, CELL_SIZE);
+      renderer.drawTrail(game.state.trail);
       renderer.drawSnake(game.state.snake);
       renderer.drawFood(game.state.food);
       overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
