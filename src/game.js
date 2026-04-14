@@ -30,6 +30,7 @@ function initialState(gridWidth, gridHeight, highScore) {
     direction: "right",
     score: 0,
     highScore,
+    newRecord: false, // true only when this game's final score beat the previous best
     running: false,
     gameOver: false,
     gridWidth,
@@ -40,24 +41,26 @@ function initialState(gridWidth, gridHeight, highScore) {
 export function createGame(gridWidth, gridHeight) {
   let state = initialState(gridWidth, gridHeight, loadHighScore());
 
+  /** Called internally when a collision is detected — updates and persists the high score. */
+  function recordGameOver() {
+    if (state.score > state.highScore) {
+      state.highScore = state.score;
+      state.newRecord = true;
+      saveHighScore(state.highScore);
+    }
+    state.running = false;
+    state.gameOver = true;
+  }
+
   function tick() {
     // TODO: move snake head, check collisions, grow on food, spawn new food
+    // When collision is detected, call recordGameOver() here.
     console.log("TODO: tick");
   }
 
   function changeDirection(dir) {
     if (OPPOSITE[dir] === state.direction) return; // prevent 180-degree reversal
     state.direction = dir;
-  }
-
-  /** Called when the game ends — updates and persists the high score. */
-  function recordGameOver() {
-    if (state.score > state.highScore) {
-      state.highScore = state.score;
-      saveHighScore(state.highScore);
-    }
-    state.running = false;
-    state.gameOver = true;
   }
 
   function reset() {

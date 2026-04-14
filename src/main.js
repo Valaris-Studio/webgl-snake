@@ -61,7 +61,7 @@ function main() {
       renderer.drawFood(game.state.food);
       drawHud(overlayCtx, game.state.score, game.state.highScore, overlayCanvas);
     } else if (game.state.gameOver) {
-      const hiTag = game.state.score === game.state.highScore && game.state.score > 0 ? "  NEW RECORD!" : "";
+      const hiTag = game.state.newRecord ? "  NEW RECORD!" : "";
       drawOverlayText(overlayCtx, `Game Over  -  Score: ${game.state.score}${hiTag}  -  Press SPACE to restart`, overlayCanvas);
     } else {
       drawOverlayText(overlayCtx, "Press SPACE to start", overlayCanvas);
