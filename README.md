@@ -11,12 +11,12 @@ python3 -m http.server 8080
 # then visit http://localhost:8080
 ```
 
-Controls: Arrow keys or WASD to steer, SPACE to start/pause.
+Controls: Arrow keys or WASD to steer, SPACE to start / restart after game over.
 
 ## Roadmap
 
 - [ ] WebGL grid rendering (line primitives with subtle color)
 - [ ] Snake movement and growth (head advance, tail trim, food collision)
 - [ ] Food spawning and collision detection
-- [ ] Score display and game over screen
+- [x] Score display and game over screen (centered overlay with score + SPACE-to-restart prompt)
 - [ ] Visual effects — glow shader on snake, fading trail, particle burst on food pickup
