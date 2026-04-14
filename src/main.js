@@ -18,20 +18,18 @@ function drawOverlayText(ctx, text, canvas) {
 function main() {
   const glCanvas = document.getElementById("glCanvas");
   const overlayCanvas = document.getElementById("overlay");
-  const gl = glCanvas.getContext("webgl");
+  const gl = glCanvas.getContext("webgl2");
 
   if (!gl) {
-    document.body.textContent = "WebGL not supported in this browser.";
+    document.body.textContent = "WebGL 2 not supported in this browser.";
     return;
   }
 
   const overlayCtx = overlayCanvas.getContext("2d");
-  const renderer = createRenderer(gl);
+  const renderer = createRenderer(gl, GRID_SIZE, GRID_SIZE);
   const game = createGame(GRID_SIZE, GRID_SIZE);
 
   setupInput(game);
-
-  console.log("WebGL Snake initialized");
 
   let lastTick = 0;
 
@@ -47,6 +45,8 @@ function main() {
 
     if (game.state.running) {
       renderer.drawGrid(GRID_SIZE, GRID_SIZE, CELL_SIZE);
+      // Trail renders before snake so ghosts appear behind the body.
+      renderer.drawTrail(game.state.trail);
       renderer.drawSnake(game.state.snake);
       renderer.drawFood(game.state.food);
       overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
