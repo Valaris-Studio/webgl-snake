@@ -11,7 +11,17 @@ python3 -m http.server 8080
 # then visit http://localhost:8080
 ```
 
-Controls: Arrow keys or WASD to steer, SPACE to start/pause.
+## Controls
+
+| Key | Action |
+|-----|--------|
+| Arrow keys / WASD | Steer the snake |
+| SPACE | Start game / Pause / Resume |
+| ESC | Restart game (works from any state) |
+
+**Game phases**: `not started → playing → paused → game over → not started`
+
+When paused, the game loop freezes and a "PAUSED" overlay is shown. The snake scene remains visible beneath the overlay.
 
 ## Roadmap
 
