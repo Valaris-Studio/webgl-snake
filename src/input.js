@@ -19,6 +19,8 @@ export function setupInput(game) {
       e.preventDefault();
       if (game.state.gameOver) {
         game.reset();
+        game.state.running = true;
+        return;
       }
       game.state.running = !game.state.running;
       return;
