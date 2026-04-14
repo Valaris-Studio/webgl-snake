@@ -41,8 +41,6 @@ function main() {
 
   setupInput(game);
 
-  console.log("WebGL Snake initialized");
-
   let lastTick = 0;
 
   function loop(timestamp) {
