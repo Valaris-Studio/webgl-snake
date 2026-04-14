@@ -1,5 +1,13 @@
 /**
  * Keyboard input — translates key events into game actions.
+ *
+ * SPACE behaviour per phase:
+ *   not_started → start
+ *   playing     → pause
+ *   paused      → resume
+ *   game_over   → restart
+ *
+ * ESC always restarts (resets to not_started) regardless of phase.
  */
 
 const KEY_MAP = {
@@ -17,10 +25,20 @@ export function setupInput(game) {
   window.addEventListener("keydown", (e) => {
     if (e.key === " ") {
       e.preventDefault();
-      if (game.state.gameOver) {
+      const { phase } = game.state;
+      if (phase === "not_started") {
+        game.start();
+      } else if (phase === "playing" || phase === "paused") {
+        game.togglePause();
+      } else if (phase === "game_over") {
         game.reset();
       }
-      game.state.running = !game.state.running;
+      return;
+    }
+
+    if (e.key === "Escape") {
+      e.preventDefault();
+      game.reset();
       return;
     }
 

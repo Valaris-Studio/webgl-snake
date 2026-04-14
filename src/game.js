@@ -1,5 +1,10 @@
 /**
  * Game state machine — pure data, no rendering.
+ *
+ * State machine:
+ *   not_started → (SPACE) → playing → (SPACE) → paused → (SPACE) → playing
+ *   playing     → (game over condition) → game_over → (SPACE/ESC) → not_started
+ *   any state   → (ESC) → not_started
  */
 
 const OPPOSITE = { up: "down", down: "up", left: "right", right: "left" };
@@ -10,8 +15,8 @@ function initialState(gridWidth, gridHeight) {
     food: { x: Math.floor(gridWidth / 4), y: Math.floor(gridHeight / 4) },
     direction: "right",
     score: 0,
-    running: false,
-    gameOver: false,
+    // phase: "not_started" | "playing" | "paused" | "game_over"
+    phase: "not_started",
     gridWidth,
     gridHeight,
   };
@@ -22,7 +27,6 @@ export function createGame(gridWidth, gridHeight) {
 
   function tick() {
     // TODO: move snake head, check collisions, grow on food, spawn new food
-    console.log("TODO: tick");
   }
 
   function changeDirection(dir) {
@@ -30,9 +34,18 @@ export function createGame(gridWidth, gridHeight) {
     state.direction = dir;
   }
 
+  function start() {
+    if (state.phase === "not_started") state.phase = "playing";
+  }
+
+  function togglePause() {
+    if (state.phase === "playing") state.phase = "paused";
+    else if (state.phase === "paused") state.phase = "playing";
+  }
+
   function reset() {
     Object.assign(state, initialState(gridWidth, gridHeight));
   }
 
-  return { state, tick, changeDirection, reset };
+  return { state, tick, changeDirection, start, togglePause, reset };
 }
