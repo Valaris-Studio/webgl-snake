@@ -15,6 +15,16 @@ function drawOverlayText(ctx, text, canvas) {
   ctx.fillText(text, canvas.width / 2, canvas.height / 2);
 }
 
+/** Renders the score HUD (top-left corner): "HI: X  SCORE: X" */
+function drawHud(ctx, score, highScore, canvas) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+  ctx.font = "20px monospace";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText(`HI: ${highScore}  SCORE: ${score}`, 12, 12);
+}
+
 function main() {
   const glCanvas = document.getElementById("glCanvas");
   const overlayCanvas = document.getElementById("overlay");
@@ -30,8 +40,6 @@ function main() {
   const game = createGame(GRID_SIZE, GRID_SIZE);
 
   setupInput(game);
-
-  console.log("WebGL Snake initialized");
 
   let lastTick = 0;
 
@@ -49,9 +57,10 @@ function main() {
       renderer.drawGrid(GRID_SIZE, GRID_SIZE, CELL_SIZE);
       renderer.drawSnake(game.state.snake);
       renderer.drawFood(game.state.food);
-      overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+      drawHud(overlayCtx, game.state.score, game.state.highScore, overlayCanvas);
     } else if (game.state.gameOver) {
-      drawOverlayText(overlayCtx, `Game Over  -  Score: ${game.state.score}  -  Press SPACE to restart`, overlayCanvas);
+      const hiTag = game.state.newRecord ? "  NEW RECORD!" : "";
+      drawOverlayText(overlayCtx, `Game Over  -  Score: ${game.state.score}${hiTag}  -  Press SPACE to restart`, overlayCanvas);
     } else {
       drawOverlayText(overlayCtx, "Press SPACE to start", overlayCanvas);
     }
