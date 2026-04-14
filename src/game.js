@@ -52,10 +52,50 @@ export function createGame(gridWidth, gridHeight) {
     state.gameOver = true;
   }
 
+  function spawnFood() {
+    // Pick a random cell not occupied by the snake
+    const occupied = new Set(state.snake.map(({ x, y }) => `${x},${y}`));
+    let pos;
+    do {
+      pos = {
+        x: Math.floor(Math.random() * state.gridWidth),
+        y: Math.floor(Math.random() * state.gridHeight),
+      };
+    } while (occupied.has(`${pos.x},${pos.y}`));
+    state.food = pos;
+  }
+
   function tick() {
-    // TODO: move snake head, check collisions, grow on food, spawn new food
-    // When collision is detected, call recordGameOver() here.
-    console.log("TODO: tick");
+    const head = state.snake[0];
+    const next = { ...head };
+
+    if (state.direction === "up")    next.y -= 1;
+    if (state.direction === "down")  next.y += 1;
+    if (state.direction === "left")  next.x -= 1;
+    if (state.direction === "right") next.x += 1;
+
+    // Wall collision
+    if (next.x < 0 || next.x >= state.gridWidth || next.y < 0 || next.y >= state.gridHeight) {
+      recordGameOver();
+      return;
+    }
+
+    // Self collision (exclude tail tip — it moves away this tick)
+    const bodyWithoutTail = state.snake.slice(0, -1);
+    if (bodyWithoutTail.some(({ x, y }) => x === next.x && y === next.y)) {
+      recordGameOver();
+      return;
+    }
+
+    const ateFood = next.x === state.food.x && next.y === state.food.y;
+
+    state.snake.unshift(next);
+    if (ateFood) {
+      state.score += 1;
+      spawnFood();
+    } else {
+      state.snake.pop();
+    }
   }
 
   function changeDirection(dir) {
