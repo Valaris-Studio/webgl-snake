@@ -3,13 +3,33 @@
  */
 
 const OPPOSITE = { up: "down", down: "up", left: "right", right: "left" };
+const HIGH_SCORE_KEY = "snake_high_score";
 
-function initialState(gridWidth, gridHeight) {
+/** Reads high score from localStorage; returns 0 if unavailable or unset. */
+function loadHighScore() {
+  try {
+    return parseInt(localStorage.getItem(HIGH_SCORE_KEY) ?? "0", 10) || 0;
+  } catch {
+    return 0;
+  }
+}
+
+/** Persists high score to localStorage; silently no-ops if unavailable. */
+function saveHighScore(score) {
+  try {
+    localStorage.setItem(HIGH_SCORE_KEY, String(score));
+  } catch {
+    // localStorage unavailable — degrade gracefully
+  }
+}
+
+function initialState(gridWidth, gridHeight, highScore) {
   return {
     snake: [{ x: Math.floor(gridWidth / 2), y: Math.floor(gridHeight / 2) }],
     food: { x: Math.floor(gridWidth / 4), y: Math.floor(gridHeight / 4) },
     direction: "right",
     score: 0,
+    highScore,
     running: false,
     gameOver: false,
     gridWidth,
@@ -18,7 +38,7 @@ function initialState(gridWidth, gridHeight) {
 }
 
 export function createGame(gridWidth, gridHeight) {
-  let state = initialState(gridWidth, gridHeight);
+  let state = initialState(gridWidth, gridHeight, loadHighScore());
 
   function tick() {
     // TODO: move snake head, check collisions, grow on food, spawn new food
@@ -30,9 +50,20 @@ export function createGame(gridWidth, gridHeight) {
     state.direction = dir;
   }
 
-  function reset() {
-    Object.assign(state, initialState(gridWidth, gridHeight));
+  /** Called when the game ends — updates and persists the high score. */
+  function recordGameOver() {
+    if (state.score > state.highScore) {
+      state.highScore = state.score;
+      saveHighScore(state.highScore);
+    }
+    state.running = false;
+    state.gameOver = true;
   }
 
-  return { state, tick, changeDirection, reset };
+  function reset() {
+    const highScore = state.highScore; // carry high score across resets
+    Object.assign(state, initialState(gridWidth, gridHeight, highScore));
+  }
+
+  return { state, tick, changeDirection, recordGameOver, reset };
 }
