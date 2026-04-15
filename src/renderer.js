@@ -14,17 +14,14 @@ export function createRenderer(gl) {
 
   function drawGrid(width, height, cellSize) {
     // TODO: render subtle grid lines via line primitives
-    console.log("TODO: draw grid", { width, height, cellSize });
   }
 
   function drawSnake(segments) {
     // TODO: render snake segments as colored quads with glow
-    console.log("TODO: draw snake", segments);
   }
 
   function drawFood(position) {
     // TODO: render food as a pulsing bright quad
-    console.log("TODO: draw food", position);
   }
 
   return { clear, drawGrid, drawSnake, drawFood };
