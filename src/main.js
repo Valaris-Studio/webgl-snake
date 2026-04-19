@@ -69,9 +69,6 @@ function main() {
     renderer.clear();
 
     if (game.state.running) {
-      renderer.drawGrid(GRID_SIZE, GRID_SIZE, CELL_SIZE);
-      renderer.drawSnake(game.state.snake);
-      renderer.drawFood(game.state.food);
       drawHUD(overlayCtx, overlayCanvas, score, speedLevel);
     } else if (game.state.gameOver) {
       drawOverlayText(overlayCtx, `Game Over  -  Score: ${score}  -  Press SPACE to restart`, overlayCanvas);
